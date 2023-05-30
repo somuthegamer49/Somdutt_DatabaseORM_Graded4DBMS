@@ -1,0 +1,119 @@
+CREATE DATABASE ecommerce;
+use ecommerce;
+
+-- CREATE TABLE rating(RAT_ID INT UNSIGNED PRIMARY KEY AUTO_INCREMENT, 
+--         ORD_ID INT UNSIGNED, 
+--         FOREIGN KEY(ORD_ID) REFERENCES ORDERS(ORD_ID), 
+--         RAT_RATSTARTS INT NOT NULL);
+
+
+
+INSERT INTO supplier (SUPP_NAME,SUPP_CITY,SUPP_PHONE) VALUES 
+('Rajesh Retails', 'Delhi', 1234567890 ),
+('Appario Ltd.', 'Mumbai', 2589631470 ),
+('Knome products', 'Bangalore', 9785462315 ),
+('Bansal Retails', 'Kochi', 8975463285 ),
+('Mittal Ltd.', 'Lucknow', 7898456532 );
+
+INSERT INTO customer (CUST_NAME,CUST_PHONE,CUST_CITY,CUST_GENDER) VALUES
+('AAKASH',9999999999,'DELHI','M'),
+('AMAN',9785463215,'NOIDA','M'),
+('NEHA',9999999999,'MUMBAI','F'),
+('MEGHA',9994562399,'KOLKATA','F'),
+('PULKIT',7895999999,'LUCKNOW','M');
+
+INSERT INTO category (CAT_NAME) VALUES
+('BOOKS'),
+('GAMES'),
+('GROCERIES'),
+('ELECTRONICS'),
+('CLOTHES');
+
+INSERT INTO product (PRO_NAME,PRO_DESC,CAT_ID) VALUES
+('GTA V','Windows 7 and above with i5 processor and 8GB RAM',2),
+('TSHIRT','SIZE-L with Black, Blue and White variations',5),
+('ROG LAPTOP','Windows 10 with 15inch screen, i7 processor, 1TB SSD',2),
+('OATS','Highly Nutritious from Nestle',2),
+('HARRY POTTER','Best Collection of all time by J.K Rowling',2),
+('MILK','1L Toned MIlk',2),
+('Boat Earphones','1.5Meter long Dolby Atmos',2),
+('Jeans','Stretchable Denim Jeans with various sizes and color',2),
+('Project IGI','compatible with windows 7 and above',2),
+('Hoodie','Black GUCCI for 13 yrs and above',2),
+('Rich Dad Poor Dad','Written by RObert Kiyosaki',2),
+('Train Your Brain','By Shireen Stephen',2);
+
+INSERT INTO supplier_pricing (PRO_ID,SUPP_ID,SUPP_PRICE) VALUES
+(1,2,1500),
+(3,5,30000),
+(5,1,3000),
+(2,3,2500),
+(4,1,1000);
+
+INSERT INTO orders (ORD_ID,ORD_AMOUNT,ORD_DATE,CUST_ID,PRICING_ID) VALUES
+(101,1500,'2021-10-06',2,1),
+(102,1000,'2021-10-12',3,5),
+(103,30000,'2021-09-16',5,2),
+(104,1500,'2021-10-05',1,1),
+(105,3000,'2021-08-16',4,3),
+(106,1450,'2021-08-18',1,9),
+(107,789,'2021-09-01',3,7),
+(108,780,'2021-09-07',5,6),
+(109,3000,'2021-00-10',5,3),
+(110,2500,'2021-09-10',2,4),
+(111,1000,'2021-09-15',4,5),
+(112,789,'2021-09-16',4,7),
+(113,31000,'2021-09-16',1,8),
+(114,1000,'2021-09-16',3,5),
+(115,3000,'2021-09-16',5,4),
+(116,99,'2021-09-17',2,14);
+
+INSERT INTO rating (ORD_ID,RAT_RATSTARTS) VALUES
+(101,4),
+(102,3),
+(103,1),
+(104,2),
+(105,4),
+(106,3),
+(107,4),
+(108,4),
+(109,3),
+(110,5),
+(111,3),
+(112,4),
+(113,2),
+(114,1),
+(115,1),
+(116,0);
+Describe rating;
+-- question 4:
+SELECT c.CUST_GENDER, count(DISTINCT(c.CUST_ID)), c.CUST_NAME, o.ORD_AMOUNT from customer c inner join orders o on c.CUST_ID=o.CUST_ID
+WHERE o.ORD_AMOUNT>=3000 group by c.CUST_GENDER;
+
+-- question 5: 
+select CUST_NAME, CUST_CITY, o.ORD_AMOUNT, o.pricing_id, s.PRO_ID, p.PRO_NAME, p.PRO_DESC
+   from customer inner join orders as o 
+     on customer.CUST_ID=o.CUST_ID 
+     inner join supplier_pricing as s
+       on o.PRICING_ID = s.PRICING_ID
+     inner join product as p
+       on s.PRO_ID=p.PRO_ID
+     and customer.CUST_ID=2;
+
+-- question 6: 
+select s.SUPP_NAME, count(p.PRO_NAME) as num_of_products from supplier as s inner join supplier_pricing as sp on s.SUPP_ID=sp.SUPP_ID
+        inner join product as p on sp.PRO_ID=p.PRO_ID
+        group by s.SUPP_NAME
+        having num_of_products > 1;
+
+-- question 7 & 8: 
+select c.CUST_NAME, o.ORD_AMOUNT, o.ORD_DATE, p.PRO_NAME, p.PRO_DESC  from orders as o inner join supplier_pricing as sp 
+         on o.PRICING_ID=sp.PRICING_ID
+     inner join product as p on sp.PRO_ID=p.PRO_ID   
+     inner join customer as c
+       on o.CUST_ID=c.CUST_ID
+    where o.ORD_DATE > "2021-09-01";
+    
+-- question 9: 
+select customer.CUST_NAME, customer.CUST_GENDER from customer 
+where customer.CUST_NAME like 'A%' or customer.CUST_NAME like '%A';
